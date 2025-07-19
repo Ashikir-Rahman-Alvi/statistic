@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>কেন্দ্রীয় পরিমাপ নির্ণয়</title>
+  <style>
+    body {
+      font-family: 'Siyam Rupali', 'Kalpurush', sans-serif;
+      background: #f5f7fa;
+      padding: 30px;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    label {
+      font-size: 16px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1c5980;
+    }
+
+    #output {
+      margin-top: 30px;
+    }
+
+    table {
+      width: 100%;
+      max-width: 800px;
+      border-collapse: collapse;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
+      margin: 5px;
+    }
+
+    td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f2f9ff;
+    }
+
+    p {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>২য়, ৩য় ও ৪র্থ কেন্দ্রীয় পরিমাপ নির্ণয়</h2>
+  <label>কমা দিয়ে সংখ্যা লিখুন (যেমন: 10,8,12,10,13,9,11,7):</label>
+  <input type="text" id="inputValues" placeholder="উদাহরণ: 10,8,12,10,13,9,11,7">
+  <br>
+  <button onclick="calculate()">গণনা করো</button>
+
+  <div id="output"></div>
+
+  <script>
+    function calculate() {
+      const input = document.getElementById("inputValues").value;
+      const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+      const n = values.length;
+      if (n === 0) {
+        document.getElementById("output").innerHTML = "<p style='color:red'>সঠিক সংখ্যা ইনপুট দিন।</p>";
+        return;
+      }
+
+      const mean = values.reduce((a, b) => a + b, 0) / n;
+      let rows = '';
+      let sum2 = 0, sum3 = 0, sum4 = 0;
+
+      values.forEach(x => {
+        const d = x - mean;
+        const d2 = d ** 2;
+        const d3 = d ** 3;
+        const d4 = d ** 4;
+        sum2 += d2;
+        sum3 += d3;
+        sum4 += d4;
+        rows += `<tr>
+          <td>${x}</td>
+          <td>${d.toFixed(2)}</td>
+          <td>${d2.toFixed(2)}</td>
+          <td>${d3.toFixed(2)}</td>
+          <td>${d4.toFixed(2)}</td>
+        </tr>`;
+      });
+
+      const mu2 = (sum2 / n).toFixed(2);
+      const mu3 = (sum3 / n).toFixed(2);
+      const mu4 = (sum4 / n).toFixed(2);
+
+      const table = `
+        <table>
+          <thead>
+            <tr>
+              <th>x<sub>i</sub></th>
+              <th>(x<sub>i</sub> - x̄)</th>
+              <th>(x<sub>i</sub> - x̄)²</th>
+              <th>(x<sub>i</sub> - x̄)³</th>
+              <th>(x<sub>i</sub> - x̄)⁴</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+            <tr>
+              <th colspan="2">মোট</th>
+              <th>${sum2.toFixed(2)}</th>
+              <th>${sum3.toFixed(2)}</th>
+              <th>${sum4.toFixed(2)}</th>
+            </tr>
+          </tbody>
+        </table>
+        <p>গড় (x̄) = ${mean.toFixed(2)}</p>
+        <p>২য় কেন্দ্রীয় পরিমাপ (μ₂) = ${mu2}</p>
+        <p>৩য় কেন্দ্রীয় পরিমাপ (μ₃) = ${mu3}</p>
+        <p>৪র্থ কেন্দ্রীয় পরিমাপ (μ₄) = ${mu4}</p>
+      `;
+
+      document.getElementById("output").innerHTML = table;
+    }
+  </script>
+
+</body>
+</html>
